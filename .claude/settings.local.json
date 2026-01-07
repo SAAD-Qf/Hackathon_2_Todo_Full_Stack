@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p history/prompts/001-todo-mvp)",
+      "Bash(.specify/scripts/bash/create-phr.sh:*)",
+      "Bash(python test_todo_app.py)",
+      "Bash(python:*)"
+    ]
+  }
+}
