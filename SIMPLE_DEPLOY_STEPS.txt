@@ -1,0 +1,40 @@
+🚀 COPY AND PASTE THESE COMMANDS IN YOUR TERMINAL
+================================================
+
+Step 1: Deploy Backend
+----------------------
+cd backend
+railway init
+railway up
+railway domain
+cd ..
+
+👉 COPY THE RAILWAY URL THAT APPEARS!
+
+Step 2: Deploy Frontend
+-----------------------
+cd frontend
+vercel --prod
+cd ..
+
+👉 COPY THE VERCEL URL THAT APPEARS!
+
+Step 3: Update Backend CORS
+---------------------------
+cd backend
+railway variables set CORS_ORIGINS=<paste-your-vercel-url-here>
+cd ..
+
+Step 4: Set Database (Neon)
+---------------------------
+1. Go to https://neon.tech
+2. Create account → Create project
+3. Copy connection string
+4. Change postgresql:// to postgresql+asyncpg://
+5. Run:
+
+cd backend
+railway variables set DATABASE_URL=<paste-your-neon-connection-string-here>
+cd ..
+
+✅ DONE! Your app is live!
