@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+frontend/node_modules/
+
+# next
+.next/
+out/
+
+# env
+.env
+.env.local
