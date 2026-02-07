@@ -40,7 +40,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
   const isValid = title.trim().length > 0;
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200">
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         {task ? 'Edit Task' : 'Create New Task'}
       </h2>
@@ -55,7 +55,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Enter task title"
           required
           maxLength={200}
@@ -72,7 +72,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Enter task description (optional)"
           rows={3}
         />
@@ -87,7 +87,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
           id="priority"
           value={priority}
           onChange={(e) => setPriority(e.target.value as Priority)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
@@ -105,7 +105,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
           id="tags"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Enter tags separated by commas (e.g., work, urgent)"
         />
         <p className="text-xs text-gray-500 mt-1">Separate multiple tags with commas (max 10)</p>
@@ -121,7 +121,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
           id="dueDate"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
 
@@ -130,7 +130,7 @@ export default function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
         <button
           type="submit"
           disabled={!isValid}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+          className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {task ? 'Update Task' : 'Create Task'}
         </button>

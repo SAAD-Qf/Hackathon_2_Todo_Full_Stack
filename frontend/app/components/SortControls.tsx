@@ -26,7 +26,7 @@ export default function SortControls({
       <select
         value={sortBy}
         onChange={(e) => onSortByChange(e.target.value)}
-        className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         <option value="created_at">Created Date</option>
         <option value="due_date">Due Date</option>
@@ -37,7 +37,7 @@ export default function SortControls({
       {/* Sort Order Toggle */}
       <button
         onClick={() => onSortOrderChange(sortOrder === 'asc' ? 'desc' : 'asc')}
-        className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
         title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
       >
         {sortOrder === 'asc' ? (

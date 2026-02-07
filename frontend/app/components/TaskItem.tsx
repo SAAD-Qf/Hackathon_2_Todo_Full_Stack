@@ -15,9 +15,9 @@ interface TaskItemProps {
 }
 
 const priorityColors = {
-  low: 'bg-blue-100 text-blue-800 border-blue-200',
-  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  high: 'bg-red-100 text-red-800 border-red-200',
+  low: 'bg-blue-50 text-blue-700 border-blue-200',
+  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  high: 'bg-red-50 text-red-700 border-red-200',
 };
 
 export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
@@ -36,8 +36,8 @@ export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: T
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border-2 p-4 hover:shadow-md transition-shadow ${
-      task.completed ? 'opacity-60 border-gray-200' : 'border-gray-300'
+    <div className={`bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow ${
+      task.completed ? 'opacity-60 border-gray-200' : 'border-gray-200'
     }`}>
       <div className="flex items-start gap-3">
         {/* Checkbox */}
@@ -45,7 +45,7 @@ export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: T
           type="checkbox"
           checked={task.completed}
           onChange={onToggleComplete}
-          className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+          className="mt-1 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
         />
 
         {/* Task Content */}
@@ -57,7 +57,7 @@ export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: T
             }`}>
               {task.title}
             </h3>
-            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
+            <span className={`px-2 py-1 text-xs font-medium rounded border ${
               priorityColors[task.priority]
             }`}>
               {task.priority}
@@ -79,7 +79,7 @@ export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: T
               {task.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-md border border-gray-200"
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded border border-gray-200"
                 >
                   #{tag}
                 </span>
@@ -110,13 +110,13 @@ export default function TaskItem({ task, onToggleComplete, onEdit, onDelete }: T
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-blue-200 transition-colors"
+            className="px-3 py-1 text-sm text-indigo-600 hover:bg-indigo-50 rounded border border-indigo-200 transition-colors"
           >
             Edit
           </button>
           <button
             onClick={onDelete}
-            className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-md border border-red-200 transition-colors"
+            className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded border border-red-200 transition-colors"
           >
             Delete
           </button>

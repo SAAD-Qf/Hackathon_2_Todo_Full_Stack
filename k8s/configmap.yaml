@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-config
+  namespace: todo-app
+data:
+  # Backend configuration
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "info"
+  CORS_ORIGINS: "http://localhost:3000,http://todo-frontend:3000"
+
+  # Frontend configuration
+  NEXT_PUBLIC_API_URL: "http://todo-backend:8000/api/v1"

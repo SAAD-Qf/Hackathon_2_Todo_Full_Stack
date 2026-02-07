@@ -37,7 +37,7 @@ export default function FilterBar({
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+            className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
           >
             Clear all
           </button>
@@ -54,7 +54,7 @@ export default function FilterBar({
             id="status"
             value={status}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">All Tasks</option>
             <option value="incomplete">Incomplete</option>
@@ -71,7 +71,7 @@ export default function FilterBar({
             id="priority"
             value={priority}
             onChange={(e) => onPriorityChange(e.target.value as Priority | '')}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Priorities</option>
             <option value="high">High</option>
@@ -89,7 +89,7 @@ export default function FilterBar({
             id="tag"
             value={tag}
             onChange={(e) => onTagChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Tags</option>
             {availableTags.map((t) => (
