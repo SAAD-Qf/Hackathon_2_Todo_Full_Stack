@@ -8,8 +8,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.routers import tasks
+from app.routers import tasks, auth
 from app.database import init_db
+from app.dependencies import get_current_user
+from fastapi import Depends
 
 
 @asynccontextmanager
@@ -48,7 +50,11 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(tasks.router)
+app.include_router(auth.router)
+app.include_router(
+    tasks.router,
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @app.get("/", tags=["root"])

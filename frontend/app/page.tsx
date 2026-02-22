@@ -432,6 +432,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { Task, TaskInput, Priority } from '@/lib/types';
 import { createTask, getTasks, updateTask, deleteTask, toggleComplete } from '@/lib/api';
 import TaskList from './components/TaskList';
@@ -442,7 +443,7 @@ import SortControls from './components/SortControls';
 import Link from 'next/link';
 
 export default function Home() {
-  // ===================== STATE =====================
+  const { data: session, status } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -454,7 +455,7 @@ export default function Home() {
 
   // Filters
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [priority, setPriority] = useState<Priority | ''>('');
   const [tag, setTag] = useState('');
   const [sortBy, setSortBy] = useState('created_at');
@@ -462,13 +463,14 @@ export default function Home() {
 
   // ===================== FETCH =====================
   const fetchTasks = useCallback(async () => {
+    if (status !== 'authenticated') return;
     try {
       setLoading(true);
       setError(null);
 
       const res = await getTasks({
         search: search || undefined,
-        status: status !== 'all' ? (status as 'completed' | 'incomplete') : undefined,
+        status: filterStatus !== 'all' ? (filterStatus as 'completed' | 'incomplete') : undefined,
         priority: priority || undefined,
         tag: tag || undefined,
         sort_by: sortBy as any,
@@ -481,15 +483,25 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [search, status, priority, tag, sortBy, sortOrder]);
+  }, [search, filterStatus, priority, tag, sortBy, sortOrder, status]);
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    if (status === "authenticated") {
+      fetchTasks();
+    }
+  }, [fetchTasks, status]);
 
   const availableTags = Array.from(new Set(tasks.flatMap(t => t.tags))).sort();
 
   // ===================== UI =====================
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={dark ? 'dark' : ''}>
       <div className="min-h-screen bg-gradient-to-br from-slate-100 via-indigo-50 to-purple-100
@@ -508,29 +520,29 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="flex gap-3">
-              {/* Chat Link */}
-              <Link 
-                href="/chat"
-                className="px-4 py-2 rounded-xl text-sm font-semibold
-                          bg-gray-200 dark:bg-slate-700
-                          hover:scale-105 active:scale-95 transition
-                          text-indigo-600 dark:text-indigo-300"
-              >
-                💬 AI Chat
-              </Link>
-              
-              {/* Connection Test Link */}
-              <Link 
-                href="/test-connection"
-                className="px-4 py-2 rounded-xl text-sm font-semibold
-                          bg-gray-200 dark:bg-slate-700
-                          hover:scale-105 active:scale-95 transition
-                          text-green-600 dark:text-green-300"
-              >
-                🔗 Test
-              </Link>
-              
+            <div className="flex gap-3 items-center">
+              {status === 'authenticated' ? (
+                <>
+                  <p className="text-sm">Signed in as {session.user?.email}</p>
+                  <button
+                    onClick={() => signOut()}
+                    className="px-4 py-2 rounded-xl text-sm font-semibold
+                               bg-gray-200 dark:bg-slate-700
+                               hover:scale-105 active:scale-95 transition"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => signIn()}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold
+                             bg-indigo-600 text-white
+                             hover:scale-105 active:scale-95 transition"
+                >
+                  Sign in
+                </button>
+              )}
               {/* 🌙 Dark Mode Toggle */}
               <button
                 onClick={() => setDark(!dark)}
@@ -541,128 +553,146 @@ export default function Home() {
                 {dark ? '☀ Light' : '🌙 Dark'}
               </button>
 
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="px-5 py-2.5 rounded-xl font-semibold text-white
-                           bg-gradient-to-r from-indigo-600 to-purple-600
-                           hover:shadow-lg hover:scale-105 active:scale-95
-                           transition-all"
-              >
-                {showForm ? 'Close Form' : '+ Add Task'}
-              </button>
+              {status === 'authenticated' && (
+                <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="px-5 py-2.5 rounded-xl font-semibold text-white
+                             bg-gradient-to-r from-indigo-600 to-purple-600
+                             hover:shadow-lg hover:scale-105 active:scale-95
+                             transition-all"
+                >
+                  {showForm ? 'Close Form' : '+ Add Task'}
+                </button>
+              )}
             </div>
           </div>
         </header>
 
         {/* CONTENT */}
         <main className="max-w-7xl mx-auto px-6 py-10 space-y-8">
+          {status === 'authenticated' ? (
+            <>
+              {/* ERROR */}
+              {error && (
+                <div className="bg-red-100 dark:bg-red-900/40 border border-red-200 dark:border-red-800
+                                text-red-700 dark:text-red-300 px-5 py-3 rounded-xl
+                                flex justify-between items-center">
+                  <span className="text-sm">{error}</span>
+                  <button onClick={() => setError(null)} className="text-lg font-bold">×</button>
+                </div>
+              )}
 
-          {/* ERROR */}
-          {error && (
-            <div className="bg-red-100 dark:bg-red-900/40 border border-red-200 dark:border-red-800
-                            text-red-700 dark:text-red-300 px-5 py-3 rounded-xl
-                            flex justify-between items-center">
-              <span className="text-sm">{error}</span>
-              <button onClick={() => setError(null)} className="text-lg font-bold">×</button>
-            </div>
-          )}
-
-          {/* FORM */}
-          {showForm && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border dark:border-slate-700 p-6">
-              <TaskForm
-                task={editingTask}
-                onSubmit={editingTask
-                  ? async (d) => {
-                      await updateTask(editingTask.id, d);
+              {/* FORM */}
+              {showForm && (
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border dark:border-slate-700 p-6">
+                  <TaskForm
+                    task={editingTask}
+                    onSubmit={editingTask
+                      ? async (d) => {
+                          await updateTask(editingTask.id, d);
+                          setEditingTask(undefined);
+                          setShowForm(false);
+                          fetchTasks();
+                        }
+                      : async (d) => {
+                          await createTask(d);
+                          setShowForm(false);
+                          fetchTasks();
+                        }}
+                    onCancel={() => {
                       setEditingTask(undefined);
                       setShowForm(false);
-                      fetchTasks();
-                    }
-                  : async (d) => {
-                      await createTask(d);
-                      setShowForm(false);
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* SEARCH */}
+              <div className="bg-white dark:bg-slate-800 rounded-xl shadow border dark:border-slate-700 p-4">
+                <SearchBar onSearch={setSearch} />
+              </div>
+
+              {/* FILTER + SORT */}
+              <div className="space-y-4">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow border dark:border-slate-700 p-4">
+                  <FilterBar
+                    status={filterStatus}
+                    priority={priority}
+                    tag={tag}
+                    availableTags={availableTags}
+                    onStatusChange={setFilterStatus}
+                    onPriorityChange={setPriority}
+                    onTagChange={setTag}
+                    onClearFilters={() => {
+                      setFilterStatus('all');
+                      setPriority('');
+                      setTag('');
+                    }}
+                  />
+                </div>
+
+                <div className="flex justify-between items-center bg-white dark:bg-slate-800
+                                rounded-xl shadow border dark:border-slate-700 p-4">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    {loading ? 'Loading tasks…' : `${tasks.length} Total Tasks`}
+                  </span>
+
+                  <SortControls
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    onSortByChange={setSortBy}
+                    onSortOrderChange={setSortOrder}
+                  />
+                </div>
+              </div>
+
+              {/* TASK LIST / EMPTY STATE */}
+              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border dark:border-slate-700 p-4">
+                {!loading && tasks.length === 0 ? (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4">📝</div>
+                    <h3 className="text-lg font-semibold">No tasks yet</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Add your first task and stay productive 🚀
+                    </p>
+                  </div>
+                ) : (
+                  <TaskList
+                    tasks={tasks}
+                    loading={loading}
+                    onToggleComplete={async (id) => {
+                      const t = tasks.find(x => x.id === id);
+                      if (!t) return;
+                      await toggleComplete(id, !t.completed);
                       fetchTasks();
                     }}
-                onCancel={() => {
-                  setEditingTask(undefined);
-                  setShowForm(false);
-                }}
-              />
+                    onEdit={(task) => {
+                      setEditingTask(task);
+                      setShowForm(true);
+                    }}
+                    onDelete={async (id) => {
+                      if (!confirm('Delete this task?')) return;
+                      await deleteTask(id);
+                      fetchTasks();
+                    }}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-16">
+                <h2 className="text-2xl font-bold">Welcome to SecureTask Manager</h2>
+                <p className="mt-4">Please sign in to manage your tasks.</p>
+                <button
+                    onClick={() => signIn()}
+                    className="mt-6 px-6 py-3 rounded-xl text-lg font-semibold
+                               bg-indigo-600 text-white
+                               hover:scale-105 active:scale-95 transition"
+                >
+                    Sign in
+                </button>
             </div>
           )}
-
-          {/* SEARCH */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow border dark:border-slate-700 p-4">
-            <SearchBar onSearch={setSearch} />
-          </div>
-
-          {/* FILTER + SORT */}
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow border dark:border-slate-700 p-4">
-              <FilterBar
-                status={status}
-                priority={priority}
-                tag={tag}
-                availableTags={availableTags}
-                onStatusChange={setStatus}
-                onPriorityChange={setPriority}
-                onTagChange={setTag}
-                onClearFilters={() => {
-                  setStatus('all');
-                  setPriority('');
-                  setTag('');
-                }}
-              />
-            </div>
-
-            <div className="flex justify-between items-center bg-white dark:bg-slate-800
-                            rounded-xl shadow border dark:border-slate-700 p-4">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                {loading ? 'Loading tasks…' : `${tasks.length} Total Tasks`}
-              </span>
-
-              <SortControls
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-                onSortByChange={setSortBy}
-                onSortOrderChange={setSortOrder}
-              />
-            </div>
-          </div>
-
-          {/* TASK LIST / EMPTY STATE */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border dark:border-slate-700 p-4">
-            {!loading && tasks.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-lg font-semibold">No tasks yet</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Add your first task and stay productive 🚀
-                </p>
-              </div>
-            ) : (
-              <TaskList
-                tasks={tasks}
-                loading={loading}
-                onToggleComplete={async (id) => {
-                  const t = tasks.find(x => x.id === id);
-                  if (!t) return;
-                  await toggleComplete(id, !t.completed);
-                  fetchTasks();
-                }}
-                onEdit={(task) => {
-                  setEditingTask(task);
-                  setShowForm(true);
-                }}
-                onDelete={async (id) => {
-                  if (!confirm('Delete this task?')) return;
-                  await deleteTask(id);
-                  fetchTasks();
-                }}
-              />
-            )}
-          </div>
         </main>
 
         {/* FOOTER */}
@@ -673,3 +703,4 @@ export default function Home() {
     </div>
   );
 }
+

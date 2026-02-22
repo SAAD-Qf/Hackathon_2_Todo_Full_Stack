@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: 'Full-stack todo application with Next.js, FastAPI, and Neon Postgres',
 };
 
+import SessionProvider from './components/SessionProvider';
+
 export default function RootLayout({
   children,
 }: {
@@ -21,7 +23,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }

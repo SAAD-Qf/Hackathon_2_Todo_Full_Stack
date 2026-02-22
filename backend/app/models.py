@@ -59,3 +59,11 @@ class Task(SQLModel, table=True):
                 "updated_at": "2026-01-06T10:30:00Z"
             }
         }
+
+
+class User(SQLModel, table=True):
+    __tablename__ = "users"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str = Field(unique=True, index=True, nullable=False)
+    hashed_password: str = Field(nullable=False)
