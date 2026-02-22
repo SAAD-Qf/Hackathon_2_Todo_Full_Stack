@@ -439,6 +439,7 @@ import TaskForm from './components/TaskForm';
 import SearchBar from './components/SearchBar';
 import FilterBar from './components/FilterBar';
 import SortControls from './components/SortControls';
+import Link from 'next/link';
 
 export default function Home() {
   // ===================== STATE =====================
@@ -508,6 +509,28 @@ export default function Home() {
             </div>
 
             <div className="flex gap-3">
+              {/* Chat Link */}
+              <Link 
+                href="/chat"
+                className="px-4 py-2 rounded-xl text-sm font-semibold
+                          bg-gray-200 dark:bg-slate-700
+                          hover:scale-105 active:scale-95 transition
+                          text-indigo-600 dark:text-indigo-300"
+              >
+                💬 AI Chat
+              </Link>
+              
+              {/* Connection Test Link */}
+              <Link 
+                href="/test-connection"
+                className="px-4 py-2 rounded-xl text-sm font-semibold
+                          bg-gray-200 dark:bg-slate-700
+                          hover:scale-105 active:scale-95 transition
+                          text-green-600 dark:text-green-300"
+              >
+                🔗 Test
+              </Link>
+              
               {/* 🌙 Dark Mode Toggle */}
               <button
                 onClick={() => setDark(!dark)}
